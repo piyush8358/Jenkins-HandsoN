@@ -14,7 +14,7 @@ body {
     position: relative;
     width: 80%;
     height: 80%;
-    background: #FFF;
+    background: #fff;
     border: 3px solid #333;
     border-radius: 10px;
     overflow: hidden;
@@ -23,9 +23,11 @@ body {
 #basket {
     position: absolute;
     bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100px;
     height: 20px;
-    background: #FF5733;
+    background: #ff5733;
     border-radius: 10px;
 }
 
@@ -34,9 +36,8 @@ body {
     top: 0;
     width: 20px;
     height: 20px;
-    background: #28A745;
+    background: #28a745;
     border-radius: 50%;
-    animation: fall 3s linear infinite;
 }
 
 @keyframes fall {
@@ -61,8 +62,8 @@ body {
 #start-button {
     margin-top: 20px;
     padding: 10px 20px;
-    background: #007BFF;
-    color: #FFF;
+    background: #007bff;
+    color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
