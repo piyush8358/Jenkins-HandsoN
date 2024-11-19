@@ -3,17 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ball Catcher Game</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Catch the Box</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            background: white;
+            border: 2px solid #333;
+            overflow: hidden;
+        }
+
+        #player {
+            position: absolute;
+            bottom: 20px;
+            left: 180px;
+            width: 40px;
+            height: 40px;
+            background-color: blue;
+        }
+
+        .falling-object {
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+        }
+
+        #scoreboard {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
     <div id="game-container">
-        <div id="basket"></div>
-        <div id="scoreboard">
-            <p>Score: <span id="score">0</span></p>
-        </div>
+        <div id="player"></div>
+        <div id="scoreboard">Score: 0</div>
     </div>
-    <button id="start-button">Start Game</button>
-    <script src="script.js"></script>
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        const player = document.getElementById('player');
+        const scoreboard = document.getElementById('scoreboard');
+
+        let score = 0;
+        let gameInterval;
+        let objectInterval;
+
+        // Move player with arrow keys
+        document.addEventListener('keydown', (e) => {
+            const playerRect = player.getBoundingClientRect();
+            const containerRect = gameContainer.getBoundingClientRect();
+
+            if (e.key === 'ArrowLeft' && playerRect.left > containerRect.left) {
+                player.style.left = player.offsetLeft - 20 + 'px';
+            } else if (e.key === 'ArrowRight' && playerRect.right < containerRect.right) {
+                player.style.left = player.offsetLeft + 20 + 'px';
+            }
+        });
+
+        // Create a falling object
+        function createFallingObject() {
+            const object = document.createElement('div');
+            object.classList.add('falling-object');
+            object.style.left = Math.random() * (gameContainer.offsetWidth - 20) + 'px';
+            gameContainer.appendChild(object);
+
+            let fallInterval = setInterval(() => {
+                object.style.top = object.offsetTop + 5 + 'px';
+
+                const objectRect = object.getBoundingClientRect();
+                const playerRect = player.getBoundingClientRect();
+                const containerRect = gameContainer.getBoundingClientRect();
+
+                // Check for collision with player
+                if (
+                    objectRect.bottom >= playerRect.top &&
+                    objectRect.left < playerRect.right &&
+                    objectRect.right > playerRect.left
+                ) {
+                    score++;
+                    scoreboard.textContent = `Score: ${score}`;
+                    object.remove();
+                    clearInterval(fallInterval);
+                }
+
+                // Remove object if it reaches the bottom
+                if (objectRect.bottom >= containerRect.bottom) {
+                    object.remove();
+                    clearInterval(fallInterval);
+                    endGame();
+                }
+            }, 30);
+        }
+
+        // Start the game
+        function startGame() {
+            score = 0;
+            scoreboard.textContent = `Score: ${score}`;
+            player.style.left = '180px';
+
+            gameInterval = setInterval(() => {
+                createFallingObject();
+            }, 1000);
+        }
+
+        // End the game
+        function endGame() {
+            clearInterval(gameInterval);
+            alert(`Game Over! Your score: ${score}`);
+            gameContainer.querySelectorAll('.falling-object').forEach((obj) => obj.remove());
+        }
+
+        // Start the game when the page loads
+        startGame();
+    </script>
 </body>
 </html>
