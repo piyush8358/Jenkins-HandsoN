@@ -100,6 +100,23 @@
             }
         });
 
+        // Move player with mouse cursor
+        gameContainer.addEventListener('mousemove', (e) => {
+            if (isGameOver) return;
+
+            const containerRect = gameContainer.getBoundingClientRect();
+            const mouseX = e.clientX - containerRect.left;
+            const playerWidth = player.offsetWidth;
+
+            // Restrict movement within game container
+            if (mouseX >= 0 && mouseX <= containerRect.width) {
+                player.style.left = Math.min(
+                    Math.max(mouseX - playerWidth / 2, 0),
+                    containerRect.width - playerWidth
+                ) + 'px';
+            }
+        });
+
         // Create a falling object
         function createFallingObject() {
             const object = document.createElement('div');
