@@ -49,24 +49,47 @@
             font-size: 18px;
             color: #333;
         }
+
+        #replay-button {
+            display: none;
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform: translate(-50%, 50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #replay-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <div id="game-container">
         <div id="player"></div>
         <div id="scoreboard">Score: 0</div>
+        <button id="replay-button">Replay</button>
     </div>
     <script>
         const gameContainer = document.getElementById('game-container');
         const player = document.getElementById('player');
         const scoreboard = document.getElementById('scoreboard');
+        const replayButton = document.getElementById('replay-button');
 
         let score = 0;
         let gameInterval;
-        let objectInterval;
+        let isGameOver = false;
 
         // Move player with arrow keys
         document.addEventListener('keydown', (e) => {
+            if (isGameOver) return;
+
             const playerRect = player.getBoundingClientRect();
             const containerRect = gameContainer.getBoundingClientRect();
 
@@ -115,8 +138,10 @@
         // Start the game
         function startGame() {
             score = 0;
+            isGameOver = false;
             scoreboard.textContent = `Score: ${score}`;
             player.style.left = '180px';
+            replayButton.style.display = 'none';
 
             gameInterval = setInterval(() => {
                 createFallingObject();
@@ -126,11 +151,19 @@
         // End the game
         function endGame() {
             clearInterval(gameInterval);
+            isGameOver = true;
             alert(`Game Over! Your score: ${score}`);
-            gameContainer.querySelectorAll('.falling-object').forEach((obj) => obj.remove());
+            replayButton.style.display = 'block';
+
+            // Remove all remaining falling objects
+            const fallingObjects = document.querySelectorAll('.falling-object');
+            fallingObjects.forEach((object) => object.remove());
         }
 
-        // Start the game when the page loads
+        // Replay button listener
+        replayButton.addEventListener('click', startGame);
+
+        // Start the game initially
         startGame();
     </script>
 </body>
